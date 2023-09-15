@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string> 
 #include <fstream>
+#include <sstream>
 using namespace std;
 /*
 1 -> 2 -> 3 -> NULL
@@ -20,8 +21,10 @@ NULL     NULL    NULL
 //node for linked list 
 struct node {
     int num;
-    node* right; //points to 
-    node* down;
+    int row;     //stores row of node
+    int column;  //stores column of node
+    node* right; //points to node on the right
+    node* down;  //points to node below
 };
 
 class List {
@@ -39,42 +42,45 @@ class List {
             return head == nullptr;
         }
 
-        void insertAtEnd(int x) {
-            //new node created
-            node* newNode = new node;
-            //node holds value being passed in parameter
-            newNode -> num = x;
-            //next node is set to null
-            newNode -> right = nullptr;
-            newNode -> down = nullptr;
-
-            //if list is empty - set element as head node
-            if(isEmpty()) {
-                head = newNode;
-            }
-            else {
-                //current node set to save value of head
-                node* curr = head;
-
-                //loop until last node is reached, node afterwards will always be empty 
-                while(curr->right != nullptr) {
-                    curr = curr->right;
-                }
-                //set last node's next pointer to point at new node created 
-                curr->right = newNode;
-                }  
-        }
-
         void print() {
             node* curr = head;
-
             //loops through each node, outputs 
             while(curr != nullptr) {
-                cout << curr->num << endl;
+                cout << curr->num << " ";
+                cout << "R:" << curr->row << " C:" << curr->column << endl;
                 //loop condition
                 curr = curr -> right;
             }
         }
+
+        void insert(int n, int r, int c) {
+            node* newNode = new node;
+            newNode -> num = n;
+            newNode -> row = r;
+            newNode -> column = c;
+            newNode -> right = nullptr;
+            newNode -> down = nullptr;
+
+            if(isEmpty()) {
+                head = newNode;
+            }
+            else {
+                node* current = head;
+                while(current -> right != nullptr) {
+                    current = current -> right;
+                }
+                current -> right = newNode;
+            }
+        }
+/*
+        void insertDown() {
+            node* current = head;
+            current -> down = nullptr;
+            while(current->column ) {
+
+            }
+        }
+*/
 
 };
 
@@ -84,21 +90,36 @@ int main(int argc, char** argv) {
         inputFile = argv[1];
     }
 
+    int numRows = 0;
+    int numColumns = 0;
+    
     List list1;
-    int num;
+
+    string line;
     ifstream file1;
     file1.open(inputFile);
     if(file1.is_open()) {
-        while(file1 >> num) {
-            list1.insertAtEnd(num);
+        //insert number into list 
+        while(getline(file1, line)) {
+            numRows++;
+            istringstream iss(line);
+            int num;
+            numColumns = 0;
+            while(iss >> num) {
+                numColumns++;
+                list1.insert(num, numRows, numColumns);
+            }
         }
     }
 
+    file1.close();
+
+    //prints number of rows and columns 
+    // cout << numRows << endl;
+    // cout << numColumns << endl;
+
+
     list1.print();
-    
-    
-
-    
-
+    cout << endl;
 
 }
