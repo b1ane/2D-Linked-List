@@ -44,43 +44,41 @@ class List {
 
         void print() {
             node* curr = head;
+            //node* temp_head = head;
             //loops through each node, outputs 
             while(curr != nullptr) {
-                cout << curr->num << " ";
-                cout << "R:" << curr->row << " C:" << curr->column << endl;
-                //loop condition
-                curr = curr -> right;
+                node* temp_head = curr;
+                while(temp_head != nullptr) {
+                    cout << temp_head->num << " ";
+                    temp_head = temp_head->right;
+                }
+                cout << endl;
+                curr = curr -> down;
             }
         }
 
         void insert(int n, int r, int c) {
             node* newNode = new node;
-            newNode -> num = n;
-            newNode -> row = r;
-            newNode -> column = c;
-            newNode -> right = nullptr;
-            newNode -> down = nullptr;
+            newNode->num = n;
+            newNode->row = r;
+            newNode->column = c;
+            newNode->right = nullptr;
+            newNode->down = nullptr;
 
-            if(isEmpty()) {
+            if (isEmpty()) {
                 head = newNode;
-            }
-            else {
+            } else {
                 node* current = head;
-                while(current -> right != nullptr) {
+                while( current -> right != nullptr ) {
+                    if(current->column == c) {
+                        newNode -> down = current;
+                    }
                     current = current -> right;
                 }
                 current -> right = newNode;
             }
         }
-/*
-        void insertDown() {
-            node* current = head;
-            current -> down = nullptr;
-            while(current->column ) {
 
-            }
-        }
-*/
 
 };
 
@@ -90,8 +88,8 @@ int main(int argc, char** argv) {
         inputFile = argv[1];
     }
 
-    int numRows = 0;
-    int numColumns = 0;
+    int numRow = 0;
+    int numColumn = 0;
     
     List list1;
 
@@ -101,22 +99,18 @@ int main(int argc, char** argv) {
     if(file1.is_open()) {
         //insert number into list 
         while(getline(file1, line)) {
-            numRows++;
+            numRow++;
             istringstream iss(line);
             int num;
-            numColumns = 0;
+            numColumn = 0;
             while(iss >> num) {
-                numColumns++;
-                list1.insert(num, numRows, numColumns);
+                numColumn++;
+                list1.insert(num, numRow, numColumn);
             }
         }
     }
 
     file1.close();
-
-    //prints number of rows and columns 
-    // cout << numRows << endl;
-    // cout << numColumns << endl;
 
 
     list1.print();
