@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 using namespace std;
+
+
 /*
 1 -> 2 -> 3 -> NULL
 |         |     |
@@ -43,17 +45,17 @@ class List {
         }
 
         void print() {
-            node* curr = head;
-            //node* temp_head = head;
-            //loops through each node, outputs 
-            while(curr != nullptr) {
-                node* temp_head = curr;
-                while(temp_head != nullptr) {
-                    cout << temp_head->num << " ";
-                    temp_head = temp_head->right;
+            node* currentRow = head;
+            //loop through rows 
+            while(currentRow != nullptr) {
+                //keep track of row 
+                node* currentColumn = currentRow;
+                while(currentColumn != nullptr) {
+                    cout << currentColumn->num << " ";
+                    currentColumn = currentColumn->right;
                 }
                 cout << endl;
-                curr = curr -> down;
+                currentRow = currentRow -> down;
             }
         }
 
@@ -68,16 +70,56 @@ class List {
             if (isEmpty()) {
                 head = newNode;
             } else {
-                node* current = head;
-                while( current -> right != nullptr ) {
-                    if(current->column == c) {
-                        newNode -> down = current;
-                    }
-                    current = current -> right;
+                node* currentRow = head;
+                node* prevRow = nullptr;
+
+                //Checks if current row is equal to row number in matrix is at 
+                //Loop untile correct row is found 
+                while (currentRow != nullptr && currentRow->row < r) {
+                    //keeps track of the row before
+                    prevRow = currentRow;
+                    //loop condition 
+                    currentRow = currentRow->down;
                 }
-                current -> right = newNode;
+
+                node* currentColumn = currentRow;
+                node* prevColumn = nullptr;
+
+                // Checks if current column is equal to column number in matrix
+                //Loops until correct column is found
+                while (currentColumn != nullptr && currentColumn->column < c) {
+                    prevColumn = currentColumn;
+                    //loop condition
+                    currentColumn = currentColumn->right;
+                }
+
+                //Check if node in row alread has same column number
+                if (currentColumn != nullptr && currentColumn->column == c) {
+                    //Insert after that node 
+                    newNode->right = currentColumn->right;
+                    currentColumn->right = newNode;
+                } else {
+                    // Node with the same column does not exist, insert in the column
+                    if (prevColumn != nullptr) {
+                        newNode->right = prevColumn->right;
+                        prevColumn->right = newNode;
+                    } else {
+                        newNode->right = currentRow;
+                        if (prevRow != nullptr) {
+                            prevRow->down = newNode;
+                        } else {
+                            head = newNode;
+                        }
+                    }
+                }
+
+                // Connect nodes below in the same column
+                if (currentRow != nullptr && currentRow != newNode) {
+                    newNode->down = currentRow;
+                }
             }
         }
+
 
 
 };
@@ -90,6 +132,7 @@ int main(int argc, char** argv) {
 
     int numRow = 0;
     int numColumn = 0;
+    int row = 0;
     
     List list1;
 
@@ -103,10 +146,13 @@ int main(int argc, char** argv) {
             istringstream iss(line);
             int num;
             numColumn = 0;
+            int column = 0;
             while(iss >> num) {
                 numColumn++;
                 list1.insert(num, numRow, numColumn);
+                column++;
             }
+            row++;
         }
     }
 
