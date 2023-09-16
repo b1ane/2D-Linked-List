@@ -113,7 +113,6 @@ class List {
                     }
                 }
 
-                // Connect nodes below in the same column
                 if (currentRow != nullptr && currentRow != newNode) {
                     newNode->down = currentRow;
                 }
@@ -132,7 +131,6 @@ int main(int argc, char** argv) {
 
     int numRow = 0;
     int numColumn = 0;
-    int row = 0;
     
     List list1;
 
@@ -146,13 +144,10 @@ int main(int argc, char** argv) {
             istringstream iss(line);
             int num;
             numColumn = 0;
-            int column = 0;
             while(iss >> num) {
                 numColumn++;
                 list1.insert(num, numRow, numColumn);
-                column++;
             }
-            row++;
         }
     }
 
